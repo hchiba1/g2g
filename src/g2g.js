@@ -4,20 +4,22 @@ var fs = require('fs');
 var common = require('./common.js');
 var path = require('path');
 var g2gmlToSparql = require('./g2g_to_sparql.js');
-var commander = require('commander').version(require("../package.json").version)
-    .arguments('<g2gml_file> <data_source>')
-    .action(function (g2gml_file, data_source) {
-      g2gPath = g2gml_file;
-      dataSrc = data_source;
-    })
+var commander = require('commander')
+    // .arguments('<g2gml_file> <data_source>')
+    .arguments('<data_source> <g2gml_file>')
     .option('-f, --format [format]', 'format of results <rq|pg|json|pgx|neo|dot|aws|all (default: pg)>', /^(rq|pg|json|pgx|neo|dot|aws|all)$/i)
     .option('-o, --output_dir [prefix]', 'directory where results are output (default: output/<input_prefix>)')
-    .option('--paginate [page_count]', 'count of rows in each page for pagination mode (default: 10000, negative means no pagination)', parseInt);
+    .option('--paginate [page_count]', 'count of rows in each page for pagination mode (default: 10000, negative means no pagination)', parseInt)
+    .version(require("../package.json").version)
+    .action(function (data_source, g2gml_file) {
+      dataSrc = data_source;
+      g2gPath = g2gml_file;
+    });
 
 commander.parse(process.argv)
 
 if(commander.args.length === 0) {
-  console.error("Error: no arguments are given!");
+  // console.error("Error: no arguments are given!");
   commander.help();
 }
 
@@ -47,7 +49,6 @@ function afterSparql(err) {
     console.log('Done.');
   }
 }
-
 
 function afterPg(err) {
   if(err) throw err;
